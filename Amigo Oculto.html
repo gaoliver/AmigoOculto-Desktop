@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+    </script>
+    <script src="https://kit.fontawesome.com/b77583e4b3.js" crossorigin="anonymous"></script>
+    <title>Amigo Oculto</title>
+
+    <style>
+        body {
+            background-color: brown;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            color: cornsilk;
+        }
+
+        /* LETRAS */
+        h1 {
+            font-size: 40pt;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-size: x-large !important;
+            text-align: center !important;
+        }
+        .fa-gift, .fa-user-friends {
+            color: burlywood !important;
+            font-size: xx-large !important;
+        }
+
+        @media screen and (max-width: 800px) {
+            h1 {
+                font-size: 30pt;
+            }
+        }
+
+        /* CAMPOS */
+        input {
+            width: 200px;
+            padding: 5px !important;
+        }
+        @media screen and (max-width: 400px) {
+            input {
+                width: 150px;
+            }
+        }
+
+        .button {
+            font-size: 15pt !important;
+            padding: 10px 20px 10px 20px !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        #ok {
+            font-size: 10pt !important;
+            padding: 7px 5px 7px 5px !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        #repeat {
+            font-size: 10pt !important;
+            padding: 7px 5px 7px 5px !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        .nomeAmigo {
+            font-size: 14pt;
+            padding: 5px;
+            margin: 5px
+        }
+
+        /* DIV's */
+        div {
+            margin: 30px 0;
+        }
+        #brincadeira {
+            display: inline-block;
+            overflow: hidden;
+            width: 800px;
+            height: 0px;
+            background-color: darkgoldenrod;
+            transition: 0.5s;
+        }
+        footer {
+            width: 100%;
+            padding: 5px 0 5px;
+            background-color: #00000098;
+            position: fixed;
+            bottom: 0 !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <h1>Amigo <i class="fas fa-user-friends"></i><i class="fas fa-gift"></i> Oculto</h1>
+        </div>
+
+        <div class="row justify-content-center">
+            <button id="confirm" class="button" onclick="start()">Iniciar</button>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div id="brincadeira" style="margin: 0 !important;">
+                <div class="row justify-content-center" style="margin: 0 !important;">
+                    <form onsubmit="confirmPart()" method="dialog" id="cadastro">
+                        <input type="text" id="partInsert" placeholder="Adicionar participante" required="required" />
+                        <input type="button" id="ok" onclick="confirmPart()" value="Ok" />
+                        <input type="button" id="repeat" onclick="voltar()" value="Tirar novamente" />
+                    </form>
+                </div>
+
+                <div class="row justify-content-center" style="margin: 50px 0 10px 0 !important;">
+                    <h3>
+                        Toque no seu nome e saiba quem você tirou.
+                    </h3>
+                </div>
+                <div id="participantes" class="row justify-content-center" style="margin: 0px;"></div>
+            </div>
+        </div>
+
+        <script>
+            var participantes = [];
+            var feitos = [];
+            var cadastro = [];
+
+            function start() {
+                document.getElementById("brincadeira").style.height = "auto";
+                document.getElementById("brincadeira").style.padding = "30px";
+                document.getElementById("confirm").outerHTML =
+                    '<button id="confirm" class="button" onclick="finish()">Reiniciar</button>';
+            }
+
+            function finish() {
+                document.getElementById("brincadeira").style.height = "0px";
+                document.getElementById("brincadeira").style.padding = "0px";
+
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+
+            function confirmPart() {
+                var participante = document.getElementById("partInsert");
+
+                participantes.push(participante.value);
+                cadastro.push(participante.value);
+
+                var quadroAmigos = document.querySelector("div#participantes");
+
+                quadroAmigos.innerHTML +=
+                    `<button id="${participante.value}" name="${participante.value}" class="nomeAmigo" onclick="tirou(this.name)">${participante.value}</button>`;
+
+                participante.value = "";
+            }
+
+            function tirou(button_name) {
+                if (feitos.includes(button_name)) {
+                    alert("Você não pode clicar esse nome novamente.");
+                } else {
+                    var x = Math.floor(Math.random() * participantes.length);
+
+                    while (participantes[x] == button_name) {
+                        var x = Math.floor(Math.random() * participantes.length);
+
+                        if (participantes == button_name) {
+                            if (
+                                confirm(
+                                    "Ocorreu um erro onde o último amigo da lista tirou o próprio nome. Por favor, recomece a brincadeira."
+                                )
+                            ) {
+                                return voltar();
+                            }
+                        }
+                    }
+
+                    alert("Você tirou " + participantes[x]);
+
+                    participantes.splice(x, 1);
+                    feitos.push(button_name);
+
+                    document.getElementById(button_name).style.backgroundColor =
+                        "gray";
+                }
+            }
+
+            function voltar() {
+                alert("Vamos tirar novamente os nomes!");
+
+                feitos = [];
+                participantes = [];
+
+                var quadroAmigos = document.querySelector("div#participantes");
+                quadroAmigos.innerHTML = '';
+
+                let i = 0;
+                while (i < cadastro.length) {
+                    quadroAmigos.innerHTML +=
+                        `<button id="${cadastro[i]}" name="${cadastro[i]}" class="nomeAmigo" onclick="tirou(this.name)">${cadastro[i]}</button>`;
+
+                    participantes.push(cadastro[i]);
+                    i += 1;
+                }
+            }
+        </script>
+    </div>
+
+    <footer>
+        <i class="fas fa-gamepad"></i> | Criado por Gabriel Ramos
+    </footer>
+
+</body>
+
+</html>
